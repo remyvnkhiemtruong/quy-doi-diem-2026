@@ -58,6 +58,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 
 let stateDGNL = {
+  exam: "hcm",
   mode: "gnl",
   subject: "A00",
   score: null
@@ -82,6 +83,17 @@ if (subjectGrid) {
   });
 }
 
+document.querySelectorAll('#examSwitch button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stateDGNL.exam = btn.dataset.exam;
+    document.querySelectorAll('#examSwitch button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateInputLabelsDGNL();
+    renderTableDGNL();
+    computeDGNL();
+  });
+});
+
 document.querySelectorAll('#modeSwitch button').forEach(btn => {
   btn.addEventListener('click', () => {
     stateDGNL.mode = btn.dataset.mode;
@@ -97,13 +109,16 @@ function updateInputLabelsDGNL(){
   const unit = document.getElementById('unitLabel');
   const hint = document.getElementById('scoreHint');
   const resultLabel = document.getElementById('resultLabel');
+  const examName = stateDGNL.exam === 'hsa' ? 'ĐHQGHN (HSA)' : 'ĐHQG-HCM';
+  const maxScore = stateDGNL.exam === 'hsa' ? 150 : 1200;
+
   if(stateDGNL.mode === 'gnl'){
-    label.textContent = 'Bước 3 — Nhập điểm ĐGNL (thang 1200)';
-    unit.textContent = '/ 1200';
-    hint.textContent = 'Nhập điểm thi Đánh giá năng lực ĐHQG-HCM (thang điểm 1200).';
+    label.textContent = `Bước 4 — Nhập điểm ĐGNL (thang ${maxScore})`;
+    unit.textContent = `/ ${maxScore}`;
+    hint.textContent = `Nhập điểm thi Đánh giá năng lực ${examName} (thang điểm ${maxScore}).`;
     resultLabel.textContent = 'Điểm THPT tương đương';
   } else {
-    label.textContent = 'Bước 3 — Nhập điểm THPT (thang 30)';
+    label.textContent = 'Bước 4 — Nhập điểm THPT (thang 30)';
     unit.textContent = '/ 30';
     hint.textContent = 'Nhập tổng điểm 3 môn thi tốt nghiệp THPT theo tổ hợp đã chọn (thang điểm 30).';
     resultLabel.textContent = 'Điểm ĐGNL tương đương';
@@ -146,8 +161,6 @@ function interpolate(x, xHigh, xLow, yHigh, yLow){
 function computeDGNL(){
   const emptyState = document.getElementById('emptyState');
   const resultContent = document.getElementById('resultContent');
-  if (!DATA || !DATA[stateDGNL.subject]) return;
-  const rows = DATA[stateDGNL.subject];
 
   if(stateDGNL.score === null || isNaN(stateDGNL.score)){
     if(emptyState) {
@@ -159,7 +172,7 @@ function computeDGNL(){
     return;
   }
   
-  let maxScore = stateDGNL.mode === 'gnl' ? 1200 : 30;
+  let maxScore = stateDGNL.mode === 'gnl' ? (stateDGNL.exam === 'hsa' ? 150 : 1200) : 30;
   if(stateDGNL.score < 0 || stateDGNL.score > maxScore) {
     if(emptyState) {
       emptyState.style.display = 'block';
@@ -173,29 +186,83 @@ function computeDGNL(){
   if(emptyState) emptyState.style.display = 'none';
   if(resultContent) resultContent.style.display = 'block';
 
-  let bracket, estimated, rangeText, unit;
-  if(stateDGNL.mode === 'gnl'){
-    bracket = findBracketByGNL(rows, stateDGNL.score);
-    estimated = interpolate(stateDGNL.score, bracket.gnlHigh, bracket.gnlLow, bracket.thptHigh, bracket.thptLow);
-    rangeText = `Khoảng tương ứng: ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)} điểm THPT (nhóm phân vị ${bracket.pv}%), ứng với ĐGNL ${bracket.gnlLow} – ${bracket.gnlHigh}.`;
-    unit = '/30';
-    document.getElementById('resultValue').innerHTML = estimated.toFixed(2) + '<sup>' + unit + '</sup>';
+  let rangeText, unit;
+
+  if(stateDGNL.exam === 'hcm') {
+    if (!DATA || !DATA[stateDGNL.subject]) return;
+    const rows = DATA[stateDGNL.subject];
+    let bracket, estimated;
+    if(stateDGNL.mode === 'gnl'){
+      bracket = findBracketByGNL(rows, stateDGNL.score);
+      estimated = interpolate(stateDGNL.score, bracket.gnlHigh, bracket.gnlLow, bracket.thptHigh, bracket.thptLow);
+      rangeText = `Khoảng tương ứng: ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)} điểm THPT (nhóm phân vị ${bracket.pv}%), ứng với ĐGNL ${bracket.gnlLow} – ${bracket.gnlHigh}.`;
+      unit = '/30';
+      document.getElementById('resultValue').innerHTML = estimated.toFixed(2) + '<sup>' + unit + '</sup>';
+    } else {
+      bracket = findBracketByTHPT(rows, stateDGNL.score);
+      estimated = interpolate(stateDGNL.score, bracket.thptHigh, bracket.thptLow, bracket.gnlHigh, bracket.gnlLow);
+      rangeText = `Khoảng tương ứng: ${bracket.gnlLow} – ${bracket.gnlHigh} điểm ĐGNL (nhóm phân vị ${bracket.pv}%), ứng với THPT ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)}.`;
+      unit = '/1200';
+      document.getElementById('resultValue').innerHTML = Math.round(estimated) + '<sup>' + unit + '</sup>';
+    }
+    document.getElementById('resultRange').textContent = rangeText;
+    document.getElementById('pvBadge').textContent = 'Nhóm phân vị ' + bracket.pv + '%';
+    document.getElementById('rulerMarker').style.left = bracket.pv + '%';
+    document.getElementById('rulerMarker').dataset.pv = bracket.pv + '%';
+    document.getElementById('rulerCaption').textContent = `Vị trí ước lượng: thí sinh này thuộc nhóm cao hơn khoảng ${100-bracket.pv}% thí sinh dự thi ĐGNL ĐHQG-HCM năm 2026.`;
+    renderTableDGNL(bracket.pv);
   } else {
-    bracket = findBracketByTHPT(rows, stateDGNL.score);
-    estimated = interpolate(stateDGNL.score, bracket.thptHigh, bracket.thptLow, bracket.gnlHigh, bracket.gnlLow);
-    rangeText = `Khoảng tương ứng: ${bracket.gnlLow} – ${bracket.gnlHigh} điểm ĐGNL (nhóm phân vị ${bracket.pv}%), ứng với THPT ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)}.`;
-    unit = '/1200';
-    document.getElementById('resultValue').innerHTML = Math.round(estimated) + '<sup>' + unit + '</sup>';
+    // HSA logic
+    if (!DATA_HSA || !DATA_HSA[stateDGNL.subject]) return;
+    const hsaMap = DATA_HSA[stateDGNL.subject];
+    let estimated, hsaVal, thptVal;
+    
+    if(stateDGNL.mode === 'gnl'){
+      hsaVal = Math.round(stateDGNL.score);
+      if(hsaVal < 19) hsaVal = 19; // Bound min
+      if(hsaVal > 150) hsaVal = 150; // Bound max
+      
+      // Attempt to find exact or nearest in the map
+      if(hsaMap[hsaVal] !== undefined) {
+        thptVal = hsaMap[hsaVal];
+      } else {
+        // If > max mapped value, use the highest available
+        let maxMappedHsa = Math.max(...Object.keys(hsaMap).map(Number));
+        if(hsaVal >= maxMappedHsa) {
+          thptVal = hsaMap[maxMappedHsa];
+          hsaVal = maxMappedHsa;
+        } else {
+           thptVal = 8.25; // fallback
+        }
+      }
+      unit = '/30';
+      document.getElementById('resultValue').innerHTML = thptVal.toFixed(2) + '<sup>' + unit + '</sup>';
+      rangeText = `Điểm HSA ${hsaVal} tương đương với ${thptVal.toFixed(2)} điểm THPT tổ hợp ${stateDGNL.subject}.`;
+    } else {
+      // From THPT to HSA
+      let targetTHPT = stateDGNL.score;
+      let closestHSA = 19;
+      let minDiff = 999;
+      for (const [key, value] of Object.entries(hsaMap)) {
+        let diff = Math.abs(value - targetTHPT);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestHSA = Number(key);
+        }
+      }
+      thptVal = hsaMap[closestHSA];
+      unit = '/150';
+      document.getElementById('resultValue').innerHTML = closestHSA + '<sup>' + unit + '</sup>';
+      rangeText = `Điểm THPT ${targetTHPT} gần nhất với mức quy đổi ${thptVal.toFixed(2)}, tương đương điểm ĐGNL HSA là ${closestHSA}.`;
+    }
+
+    document.getElementById('resultRange').textContent = rangeText;
+    document.getElementById('pvBadge').textContent = 'HSA';
+    document.getElementById('rulerMarker').style.left = '50%';
+    document.getElementById('rulerMarker').dataset.pv = 'HSA';
+    document.getElementById('rulerCaption').textContent = `Dữ liệu dựa trên bảng quy đổi ĐGNL ĐHQGHN năm 2026.`;
+    renderTableDGNL();
   }
-
-  document.getElementById('resultRange').textContent = rangeText;
-  document.getElementById('pvBadge').textContent = 'Nhóm phân vị ' + bracket.pv + '%';
-  document.getElementById('rulerMarker').style.left = bracket.pv + '%';
-  document.getElementById('rulerMarker').dataset.pv = bracket.pv + '%';
-  document.getElementById('rulerCaption').textContent =
-    `Vị trí ước lượng: thí sinh này thuộc nhóm cao hơn khoảng ${100-bracket.pv}% thí sinh dự thi ĐGNL ĐHQG-HCM năm 2026 (theo bách phân vị).`;
-
-  renderTableDGNL(bracket.pv);
 }
 
 function buildTicksDGNL(){
@@ -209,22 +276,60 @@ function buildTicksDGNL(){
 }
 
 function renderTableDGNL(highlightPv){
-  if (!DATA || !DATA[stateDGNL.subject]) return;
-  const rows = DATA[stateDGNL.subject];
   const tbody = document.getElementById('tableBody');
-  if(!tbody) return;
-  tbody.innerHTML = rows.map(r => `
-    <tr class="${r.pv === highlightPv ? 'active-hl' : ''}" data-pv="${r.pv}" style="${r.pv === highlightPv ? 'background:var(--seal-soft); font-weight:600;' : ''}">
-      <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.pv}%</td>
-      <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.gnlHigh}</td>
-      <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.gnlLow}</td>
-      <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.thptHigh.toFixed(2)}</td>
-      <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.thptLow.toFixed(2)}</td>
-    </tr>
-  `).join('');
-  if(highlightPv){
-    const el = tbody.querySelector(`tr[data-pv="${highlightPv}"]`);
-    if(el) el.scrollIntoView({block:'center'});
+  const theadRow = document.getElementById('tableHeadRow');
+  if(!tbody || !theadRow) return;
+
+  if (stateDGNL.exam === 'hcm') {
+    theadRow.innerHTML = `
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);" title="Tỷ lệ phần trăm thí sinh có điểm thấp hơn mức này">Phân vị <span style="cursor:help;opacity:0.6">(?)</span></th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">ĐGNL cao nhất</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">ĐGNL thấp nhất</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">THPT cao nhất</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">THPT thấp nhất</th>
+    `;
+    if (!DATA || !DATA[stateDGNL.subject]) return;
+    const rows = DATA[stateDGNL.subject];
+    tbody.innerHTML = rows.map(r => `
+      <tr class="${r.pv === highlightPv ? 'active-hl' : ''}" data-pv="${r.pv}" style="${r.pv === highlightPv ? 'background:var(--seal-soft); font-weight:600;' : ''}">
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.pv}%</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.gnlHigh}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.gnlLow}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.thptHigh.toFixed(2)}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.thptLow.toFixed(2)}</td>
+      </tr>
+    `).join('');
+    if(highlightPv){
+      const el = tbody.querySelector(`tr[data-pv="${highlightPv}"]`);
+      if(el) el.scrollIntoView({block:'center'});
+    }
+  } else {
+    theadRow.innerHTML = `
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Tốp (%)</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Điểm HSA</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'A00' ? '700' : 'normal'};">A00</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'B00' ? '700' : 'normal'};">B00</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'C00' ? '700' : 'normal'};">C00</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'D01' ? '700' : 'normal'};">D01</th>
+    `;
+    if (!DATA_HSA_TABLE) return;
+    tbody.innerHTML = DATA_HSA_TABLE.map(r => {
+      // highlight column of active subject
+      const a00Style = stateDGNL.subject === 'A00' ? 'background:var(--seal-soft); font-weight:600;' : '';
+      const b00Style = stateDGNL.subject === 'B00' ? 'background:var(--seal-soft); font-weight:600;' : '';
+      const c00Style = stateDGNL.subject === 'C00' ? 'background:var(--seal-soft); font-weight:600;' : '';
+      const d01Style = stateDGNL.subject === 'D01' ? 'background:var(--seal-soft); font-weight:600;' : '';
+
+      return `
+      <tr>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line); font-weight:bold;">${r.pv}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.hsa}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${a00Style}">${r.A00.toFixed(2)}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${b00Style}">${r.B00.toFixed(2)}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${c00Style}">${r.C00.toFixed(2)}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${d01Style}">${r.D01.toFixed(2)}</td>
+      </tr>
+    `}).join('');
   }
 }
 

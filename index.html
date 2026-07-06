@@ -94,23 +94,32 @@
   <!-- TAB 1: ĐGNL ↔ THPT -->
   <div id="tab-dgnl" class="tab-content active">
     <section class="tool">
+      <div class="row" style="margin-bottom: 24px;">
+        <div class="col">
+          <span class="field-label">Bước 1 — Chọn Kỳ thi Đánh giá năng lực</span>
+          <div class="segmented" id="examSwitch">
+            <button class="active" data-exam="hcm">ĐHQG-HCM (APT)</button>
+            <button data-exam="hsa">ĐHQGHN (HSA)</button>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col">
-          <span class="field-label">Bước 1 — Chọn tổ hợp môn tương ứng</span>
+          <span class="field-label">Bước 2 — Chọn tổ hợp môn tương ứng</span>
           <div class="subject-grid" id="subjectGrid"></div>
         </div>
       </div>
       
       <div class="row">
         <div class="col">
-          <span class="field-label">Bước 2 — Chiều quy đổi</span>
+          <span class="field-label">Bước 3 — Chiều quy đổi</span>
           <div class="segmented" id="modeSwitch">
             <button class="active" data-mode="gnl">Từ ĐGNL sang THPT</button>
             <button data-mode="thpt">Từ THPT sang ĐGNL</button>
           </div>
         </div>
         <div class="col">
-          <span class="field-label" id="inputFieldLabel">Bước 3 — Nhập điểm</span>
+          <span class="field-label" id="inputFieldLabel">Bước 4 — Nhập điểm</span>
             <div class="score-input-wrap">
               <input type="number" id="scoreInput" placeholder="VD: 850" min="0" max="1200" step="any">
               <span class="unit" id="unitLabel">/1200</span>
@@ -154,7 +163,7 @@
       <div class="table-scroll-wrap">
         <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
           <thead style="position:sticky; top:0; background:#F7F9FC; z-index:10;">
-            <tr>
+            <tr id="tableHeadRow">
               <th style="padding:10px 15px; border-bottom:1px solid var(--line);" title="Tỷ lệ phần trăm thí sinh có điểm thấp hơn mức này">Phân vị <span style="cursor:help;opacity:0.6">(?)</span></th>
               <th style="padding:10px 15px; border-bottom:1px solid var(--line);">ĐGNL cao nhất</th>
               <th style="padding:10px 15px; border-bottom:1px solid var(--line);">ĐGNL thấp nhất</th>
@@ -248,6 +257,7 @@
 
 <!-- Data dependencies -->
 <script src="js/data.js"></script>
+<script src="js/data_hsa.js"></script>
 <!-- Application Logic -->
 <script src="js/app.js"></script>
 </body>

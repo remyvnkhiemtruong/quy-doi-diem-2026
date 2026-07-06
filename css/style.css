@@ -65,7 +65,7 @@
   .subtitle b{color:var(--ink);font-weight:600;}
 
   .disclaimer{
-    background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);
+    background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);
     border-radius:8px;padding:14px 16px;font-size:13px;color:var(--ink-soft);margin-bottom:22px;
   }
 
@@ -89,12 +89,12 @@
   .combo-input{
     width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:15px;
     border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;
-    outline:none;background:#fff;color:var(--ink);
+    outline:none;background:var(--card);color:var(--ink);
   }
   .combo-input:focus{border-color:var(--seal);}
   .combo-panel{
     position:absolute;z-index:20;top:calc(100% + 6px);left:0;right:0;
-    background:#fff;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
     max-height:280px;overflow-y:auto;box-shadow:0 14px 34px -14px rgba(22,35,61,0.35);
     display:none;
   }
@@ -157,7 +157,7 @@
   .ruler-marker::after{
     content:attr(data-pv);position:absolute;top:-24px;left:50%;transform:translateX(-50%);
     font-family:'IBM Plex Mono', monospace;font-size:11px;font-weight:600;color:var(--ink);
-    background:#fff;border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;
+    background:var(--card);border:1px solid var(--line);padding:2px 6px;border-radius:6px;white-space:nowrap;
   }
   .ruler-labels{display:flex;justify-content:space-between;font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:var(--ink-soft);margin-top:6px;}
 
@@ -317,7 +317,7 @@
   @media (max-width:560px){ .subject-grid{grid-template-columns:repeat(3,1fr);} }
   .subject-btn{
     border:1.5px solid var(--line);
-    background:#fff;
+    background:var(--card);
     border-radius:10px;
     padding:12px 6px 10px;
     cursor:pointer;
@@ -465,7 +465,7 @@
     font-size:11px;
     font-weight:600;
     color:var(--ink);
-    background:#fff;
+    background:var(--card);
     border:1px solid var(--line);
     padding:2px 6px;
     border-radius:6px;
@@ -556,7 +556,7 @@
   }
   footer a{color:var(--seal);}
   .disclaimer{
-    background:#fff;
+    background:var(--card);
     border:1px solid var(--line);
     border-left:3px solid var(--gold);
     border-radius:8px;
