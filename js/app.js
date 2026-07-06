@@ -394,42 +394,6 @@ if(document.getElementById('tableSubjectName')) {
   computeDGNL();
 }
 
-// Layout Toggle Logic
-const layoutToggle = document.getElementById('layoutToggle');
-if (layoutToggle) {
-  const isSplit = localStorage.getItem('splitView') !== 'false';
-  if (isSplit) {
-    document.body.classList.add('split-view-active');
-  }
-  layoutToggle.addEventListener('click', () => {
-    document.body.classList.toggle('split-view-active');
-    const active = document.body.classList.contains('split-view-active');
-    localStorage.setItem('splitView', active);
-  });
-}
-
-// Fullscreen Toggle Logic
-const fullscreenToggle = document.getElementById('fullscreenToggle');
-if (fullscreenToggle) {
-  fullscreenToggle.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  });
-
-  document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-      fullscreenToggle.textContent = '🗗 Thu nhỏ';
-    } else {
-      fullscreenToggle.textContent = '⛶ Toàn màn hình';
-    }
-  });
-}
-
 // ==========================================
 // --- TAB 2: KHỐI THI LOGIC ---
 // ==========================================
