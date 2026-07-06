@@ -1,0 +1,16 @@
+{
+  "name": "Quy đổi điểm 2026",
+  "short_name": "Điểm 2026",
+  "description": "Công cụ quy đổi điểm ĐGNL ĐHQG-HCM và Tra cứu phân vị khối thi 2026.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F7F9FC",
+  "theme_color": "#202532",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3248/3248085.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
