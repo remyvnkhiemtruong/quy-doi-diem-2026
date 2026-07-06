@@ -94,7 +94,7 @@ document.querySelectorAll('#modeSwitch button').forEach(btn => {
 
 function updateInputLabelsDGNL(){
   const label = document.getElementById('inputFieldLabel');
-  const unit = document.getElementById('unitTag');
+  const unit = document.getElementById('unitLabel');
   const hint = document.getElementById('scoreHint');
   const resultLabel = document.getElementById('resultLabel');
   if(stateDGNL.mode === 'gnl'){
