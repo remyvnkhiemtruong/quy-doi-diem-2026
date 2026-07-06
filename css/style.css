@@ -359,7 +359,7 @@
   }
   .segmented button.active{
     background:var(--ink);
-    color:#fff;
+    color:var(--paper);
   }
 
   .row{
