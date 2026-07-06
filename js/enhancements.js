@@ -58,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4. Ripple Effect
   document.querySelectorAll('button, .tab-btn, .subject-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
-      const rect = this.getBoundingClientRect();
+      const el = e.currentTarget;
+      if (!el || typeof el.getBoundingClientRect !== 'function') return;
+      const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       
