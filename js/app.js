@@ -150,6 +150,17 @@ const scoreInput = document.getElementById('scoreInput');
 if (scoreInput) {
   scoreInput.addEventListener('input', (e) => {
     const v = parseFloat(e.target.value);
+    
+    let maxScore = stateDGNL.mode === 'gnl' ? (stateDGNL.exam === 'hsa' ? 150 : 1200) : 30;
+    if(isNaN(v) || v < 0 || v > maxScore) {
+      if(window.showToast) {
+        window.showToast(`Điểm không hợp lệ! Vui lòng nhập từ 0 đến ${maxScore}`, 'error');
+        scoreInput.classList.add('shake');
+        setTimeout(() => scoreInput.classList.remove('shake'), 400);
+      }
+      return;
+    }
+
     stateDGNL.score = isNaN(v) ? null : v;
     computeDGNL();
   });
@@ -239,7 +250,7 @@ function computeDGNL(){
   if(emptyState) emptyState.style.display = 'none';
   if(resultContent) resultContent.style.display = 'block';
 
-  let rangeText, unit;
+  let rangeText, unit, finalResult;
 
   if(stateDGNL.exam === 'hcm') {
     if (!DATA || !DATA[stateDGNL.subject]) return;
@@ -250,13 +261,15 @@ function computeDGNL(){
       estimated = interpolate(stateDGNL.score, bracket.gnlHigh, bracket.gnlLow, bracket.thptHigh, bracket.thptLow);
       rangeText = `Khoảng tương ứng: ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)} điểm THPT (nhóm phân vị ${bracket.pv}%), ứng với ĐGNL ${bracket.gnlLow} – ${bracket.gnlHigh}.`;
       unit = '/30';
-      document.getElementById('resultValue').innerHTML = estimated.toFixed(2) + '<sup>' + unit + '</sup>';
+      finalResult = estimated.toFixed(2);
+      document.getElementById('resultValue').innerHTML = finalResult + '<sup>' + unit + '</sup>';
     } else {
       bracket = findBracketByTHPT(rows, stateDGNL.score);
       estimated = interpolate(stateDGNL.score, bracket.thptHigh, bracket.thptLow, bracket.gnlHigh, bracket.gnlLow);
       rangeText = `Khoảng tương ứng: ${bracket.gnlLow} – ${bracket.gnlHigh} điểm ĐGNL (nhóm phân vị ${bracket.pv}%), ứng với THPT ${bracket.thptLow.toFixed(2)} – ${bracket.thptHigh.toFixed(2)}.`;
       unit = '/1200';
-      document.getElementById('resultValue').innerHTML = Math.round(estimated) + '<sup>' + unit + '</sup>';
+      finalResult = Math.round(estimated);
+      document.getElementById('resultValue').innerHTML = finalResult + '<sup>' + unit + '</sup>';
     }
     document.getElementById('resultRange').textContent = rangeText;
     document.getElementById('pvBadge').textContent = 'Nhóm phân vị ' + bracket.pv + '%';
@@ -290,7 +303,8 @@ function computeDGNL(){
       }
       activeHsa = hsaVal;
       unit = '/30';
-      document.getElementById('resultValue').innerHTML = thptVal.toFixed(2) + '<sup>' + unit + '</sup>';
+      finalResult = thptVal.toFixed(2);
+      document.getElementById('resultValue').innerHTML = finalResult + '<sup>' + unit + '</sup>';
       rangeText = `Điểm HSA ${hsaVal} tương đương với ${thptVal.toFixed(2)} điểm THPT tổ hợp ${stateDGNL.subject}.`;
     } else {
       // From THPT to HSA
@@ -307,6 +321,7 @@ function computeDGNL(){
       activeHsa = closestHSA;
       thptVal = hsaMap[closestHSA];
       unit = '/150';
+      finalResult = closestHSA;
       document.getElementById('resultValue').innerHTML = closestHSA + '<sup>' + unit + '</sup>';
       rangeText = `Điểm THPT ${targetTHPT} gần nhất với mức quy đổi ${thptVal.toFixed(2)}, tương đương điểm ĐGNL HSA là ${closestHSA}.`;
     }
@@ -322,6 +337,13 @@ function computeDGNL(){
     document.getElementById('rulerCaption').textContent = `Vị trí ước lượng: điểm HSA này thuộc Tốp ${topText}% thí sinh có điểm cao nhất (tương đương vượt qua ${percentile.toFixed(1)}% thí sinh).`;
     
     renderTableDGNL(activeHsa);
+  }
+
+  if (window.addToHistory) {
+      window.addToHistory(`${stateDGNL.mode === 'gnl' ? stateDGNL.exam.toUpperCase() : 'THPT'}: ${stateDGNL.score} ➔ Kết quả: ${finalResult}`);
+  }
+  if (window.speakResult) {
+      // Logic for voice synthesis can be triggered here
   }
 }
 

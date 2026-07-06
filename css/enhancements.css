@@ -1,0 +1,305 @@
+/* ==============================================================
+   ENHANCEMENTS CSS (100 Features Upgrade)
+   ============================================================== */
+
+/* 1. CSS Variables for Enhancements */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --toast-bg: #2F6B4F;
+  --toast-color: #fff;
+}
+.dark {
+  --glass-bg: rgba(26, 34, 53, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --toast-bg: #43A074;
+}
+
+/* 2. Scroll Progress Bar (Feature 11) */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--seal), var(--gold), var(--good));
+  z-index: 9999;
+  transition: width 0.1s ease;
+}
+
+/* 3. Custom Cursor (Feature 14) */
+body {
+  /* cursor: none; */
+}
+.custom-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: difference;
+}
+.custom-cursor.hovering {
+  width: 40px;
+  height: 40px;
+  background: rgba(243, 198, 111, 0.3);
+}
+
+/* 4. Ripple Effect (Feature 2) */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-anim 0.6s linear;
+  background-color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+@keyframes ripple-anim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+button, .tab-btn, .subject-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 5. Hover State & Glassmorphism (Feature 1, 46) */
+.tool, .table-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow);
+}
+.tool:hover, .table-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+.dark .tool:hover, .dark .table-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* 6. Glow on Focus (Feature 4) */
+input[type="number"]:focus, input[type="text"]:focus {
+  box-shadow: 0 0 0 3px rgba(100, 196, 151, 0.3);
+  border-color: var(--good) !important;
+}
+
+/* 7. Shake Animation for Errors (Feature 9) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+.shake {
+  animation: shake 0.4s ease-in-out;
+  border-color: var(--seal) !important;
+  box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.2);
+}
+
+/* 8. Toast Notifications (Feature 6) */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10001;
+}
+.toast {
+  background: var(--toast-bg);
+  color: var(--toast-color);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateX(120%);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast.show {
+  transform: translateX(0);
+}
+.toast.error { background: var(--seal); }
+.toast.warning { background: var(--gold); color: #000; }
+
+/* 9. Back to Top Button (Feature 16) */
+#back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 45px;
+  height: 45px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  z-index: 9998;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+#back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+#back-to-top:hover {
+  transform: translateY(-5px);
+}
+
+/* 10. Skeleton Loading (Feature 3) */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, var(--line) 4%, var(--card) 25%, var(--line) 36%);
+  background-size: 1000px 100%;
+  color: transparent !important;
+  border-radius: 4px;
+}
+
+/* 11. Tooltip (Feature 7) */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInTooltip 0.2s forwards 0.2s;
+}
+@keyframes fadeInTooltip {
+  to { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* 12. Sticky Header Shrink (Feature 15) */
+header.letterhead {
+  transition: padding 0.3s ease, transform 0.3s ease;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--paper);
+  border-bottom: 1px solid transparent;
+}
+header.letterhead.shrink {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+header.letterhead.shrink h1 {
+  font-size: 24px;
+}
+
+/* 13. Text Gradient (Feature 54) */
+.gradient-text {
+  background: linear-gradient(45deg, var(--seal), var(--gold), var(--good));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: gradientShift 3s linear infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* 14. Confetti Canvas (Feature 59) */
+#confetti-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 99999;
+}
+
+/* 15. Action Bar (Feature 63) */
+.action-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.action-btn {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.action-btn:hover {
+  background: var(--seal-soft);
+  color: var(--seal);
+  border-color: var(--seal);
+}
+
+/* 16. History Panel (Feature 31) */
+.history-panel {
+  position: fixed;
+  top: 50%; left: -300px;
+  transform: translateY(-50%);
+  width: 250px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 20px;
+  border-radius: 0 16px 16px 0;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+.history-panel.open {
+  left: 0;
+}
+.history-toggle {
+  position: absolute;
+  top: 50%; right: -40px;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+/* Reduce Motion (Feature 74) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
