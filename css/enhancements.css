@@ -74,11 +74,16 @@ button, .tab-btn, .subject-btn {
 /* 5. Hover State & Glassmorphism (Feature 1, 46) */
 .tool, .table-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: var(--glass-bg) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: var(--glass-shadow);
+}
+/* Glassmorphism only on desktop light mode */
+@media (min-width: 577px) {
+  body:not(.dark) .tool, body:not(.dark) .table-card {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-shadow);
+  }
 }
 .tool:hover, .table-card:hover {
   transform: translateY(-4px);
@@ -88,8 +93,8 @@ button, .tab-btn, .subject-btn {
   box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
 
-/* 6. Glow on Focus (Feature 4) */
-input[type="number"]:focus, input[type="text"]:focus {
+/* 6. Glow on Focus — only on non-underline inputs (Feature 4) */
+input[type="text"]:focus {
   box-shadow: 0 0 0 3px rgba(100, 196, 151, 0.3);
   border-color: var(--good) !important;
 }

@@ -174,31 +174,7 @@
   @media (max-width:720px){
     .search-row{flex-direction:row;}
     .search-col-btn{margin-top:24px;}
-    body { padding-bottom: 80px; } /* Prevent overlap with back-to-top */
-    
-    /* 1. Container & Padding adjustments */
-    .wrap { padding: 15px 20px; border-radius: 12px; }
-    h3, .step-title { font-size: 15px !important; margin-bottom: 12px; }
-    
-    /* 2. Touch Targets */
-    .tab-btn { padding: 12px 16px; font-size: 15px; }
-    .tabs { justify-content: space-around; }
-    #themeToggle { padding: 10px 16px !important; font-size: 16px !important; }
-    .subject-btn { padding: 16px 12px; }
-    .grid-2 { gap: 16px; }
-    
-    /* 3. Text Scaling & Readability */
-    .subject-desc, .sub-text, #resultRange { font-size: 13px !important; line-height: 1.5; }
-    
-    /* 4. Table Scroll fix */
-    .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-width: 500px; } /* Force scroll instead of cramping */
-    
-    /* 5. Icon & Input polish */
-    .action-bar button { padding: 10px 14px; font-size: 14px; }
-    #scoreInput { font-size: 2.5rem; padding: 10px 0; }
-    .result-value { font-size: 2.2rem; }
-    .percentile-bar span { padding: 2px 6px; font-size: 11px; white-space: nowrap; }
+    body { padding-bottom: 80px; }
   }
 
   .desktop-only {
@@ -260,7 +236,7 @@
 
   @media (max-width:720px){
     .row{flex-direction:column;}
-    .arrow-between{transform:rotate(90deg);margin:0 auto;}
+    .arrow-between{transform:rotate(90deg);margin:8px auto;}
   }
   @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
 
@@ -466,6 +442,23 @@
   }
   .hint{font-size:12.5px;color:var(--ink-soft);margin-top:8px;}
 
+  /* Snapshot button */
+  .snapshot-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .snapshot-btn:hover {
+    background: var(--seal-soft);
+  }
+
   /* Result */
   .result{
     border-top:1px dashed var(--line);
@@ -584,7 +577,13 @@
     padding:10px 0 2px;
   }
 
-  /* Reference table */
+  /* Reference table - thead uses CSS variables for dark mode */
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--row-alt);
+  }
   .table-card{
     background:var(--card);
     border:1px solid var(--line);
@@ -669,13 +668,32 @@
   }  
 
   /* =========================================
-     RESPONSIVE DESIGN 
+     RESPONSIVE DESIGN — PRODUCTION MOBILE
      ========================================= */
 
+  /* --- Disable hover effects on touch devices --- */
+  @media (hover: none) {
+    .tool:hover, .table-card:hover {
+      transform: none !important;
+      box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(31, 38, 135, 0.07)) !important;
+    }
+  }
+
+  /* --- Dark mode: solid cards, fix glass transparency --- */
+  .dark .tool, .dark .table-card {
+    background: var(--card) !important;
+    backdrop-filter: none !important;
+  }
+  .dark thead, .dark thead th {
+    background: var(--table-head-bg) !important;
+    color: var(--table-head-text) !important;
+  }
+
+  /* --- Tablet (768px) --- */
   @media (max-width: 768px) {
-    .wrap { padding: 0 15px 40px; }
-    h1 { font-size: 28px; }
-    .tool { padding: 20px; }
+    .wrap { padding: 0 18px 50px; }
+    h1 { font-size: 26px; }
+    .tool { padding: 22px; }
     .tabs { 
       overflow-x: auto; 
       white-space: nowrap; 
@@ -686,26 +704,120 @@
     .tabs::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
   }
 
+  /* --- Mobile (576px) --- */
   @media (max-width: 576px) {
-    .tool { padding: 16px; margin-bottom: 20px; }
-    .combo-input, input[type="number"], .subject-btn, .tab-btn { min-height: 44px; }
-    .ruler-labels { font-size: 11px; }
-    .ruler-caption { font-size: 12.5px; }
-    .field-label { margin-bottom: 8px; }
-    header.letterhead { padding: 24px 0 16px; margin-bottom: 24px; }
-    thead th { white-space: nowrap; }
-  }
+    /* Header: reduce vertical footprint */
+    header.letterhead { 
+      padding: 16px 0 12px; 
+      margin-bottom: 16px; 
+      border-bottom: 1.5px solid var(--line);
+    }
+    header.letterhead h1 { font-size: 22px; margin-bottom: 4px; }
+    .header-actions { margin-bottom: 8px !important; }
+    #themeToggle { padding: 7px 14px !important; font-size: 13px !important; }
 
-  @media (max-width: 380px) {
-    .subject-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .tabs { gap: 6px; }
-    .tab-btn { padding: 10px 14px; font-size: 14px; }
-    h1 { font-size: 24px; }
-    .ruler-labels {
+    /* Tabs: stretch to fill */
+    .tabs { 
+      gap: 0; 
+      margin-bottom: 16px;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: center;
+    }
+    .tab-btn { 
+      flex: 1; 
+      text-align: center; 
+      padding: 11px 8px; 
+      font-size: 14px;
+      min-height: 44px;
+    }
+
+    /* Tool cards */
+    .tool { padding: 16px; margin-bottom: 16px; }
+    .row { gap: 14px; margin-bottom: 14px; }
+
+    /* Segmented controls: fill width */
+    .segmented {
+      display: flex;
+      width: 100%;
+    }
+    .segmented button {
+      flex: 1;
+      padding: 9px 8px;
+      font-size: 12.5px;
       text-align: center;
     }
+
+    /* Subject grid */
+    .subject-btn { 
+      padding: 10px 6px 8px; 
+      min-height: 65px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .subject-btn .subj-name { font-size: 11px; line-height: 1.3; }
+    .combo-input, input[type="number"], .subject-btn, .tab-btn { min-height: 44px; }
+
+    /* Score input: remove green glow conflict with underline */
+    input[type="number"]:focus {
+      box-shadow: none !important;
+      border-bottom-color: var(--seal);
+    }
+
+    /* Snapshot button: inline instead of absolute */
+    .snapshot-btn {
+      position: static !important;
+      float: right;
+      margin: -4px 0 8px 8px;
+    }
+
+    /* Result spacing */
+    .result { padding-top: 18px; margin-top: 4px; }
+    .result-value { font-size: clamp(30px, 8vw, 38px); }
+    .result-desc, #resultRange { font-size: 12.5px; line-height: 1.55; padding-right: 4px; }
+    .ruler-caption { font-size: 12px; line-height: 1.5; }
+    .ruler-labels { font-size: 11px; }
+    .field-label { margin-bottom: 8px; }
+    .hint { font-size: 12px; line-height: 1.4; }
+
+    /* Table: ensure all 5 cols visible with scroll hint */
+    .table-card { 
+      padding: 16px 16px 8px;
+      overflow: hidden; 
+    }
+    .table-scroll-wrap {
+      position: relative;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-scroll-wrap::after {
+      content: "← Vuốt ngang để xem thêm →";
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-soft);
+      padding: 8px 0 4px;
+      opacity: 0.6;
+    }
+    table { min-width: 600px; }
+    thead th { white-space: nowrap; font-size: 11px; padding: 8px 10px; }
+
+    /* Back to top */
+    #back-to-top {
+      bottom: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+  }
+
+  /* --- Very small screens (380px) --- */
+  @media (max-width: 380px) {
+    .subject-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .tabs { gap: 4px; }
+    .tab-btn { padding: 10px 6px; font-size: 13px; }
+    h1 { font-size: 20px; }
+    header.letterhead h1 { font-size: 20px; }
+    .segmented button { font-size: 11.5px; padding: 8px 6px; }
+    .result-value { font-size: 28px; }
   }
