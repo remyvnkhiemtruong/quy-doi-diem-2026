@@ -88,6 +88,24 @@ document.querySelectorAll('#examSwitch button').forEach(btn => {
     stateDGNL.exam = btn.dataset.exam;
     document.querySelectorAll('#examSwitch button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    
+    // Hide A01 if HSA is selected
+    const a01Btn = document.querySelector('#subjectGrid .subject-btn[data-subject="A01"]');
+    if(a01Btn) {
+      if(stateDGNL.exam === 'hsa') {
+        a01Btn.style.display = 'none';
+        if(stateDGNL.subject === 'A01') {
+          // Switch to A00
+          stateDGNL.subject = 'A00';
+          document.querySelectorAll('#subjectGrid .subject-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('#subjectGrid .subject-btn[data-subject="A00"]').classList.add('active');
+          document.getElementById('tableSubjectName').textContent = 'A00 — ' + SUBJECT_NAMES['A00'];
+        }
+      } else {
+        a01Btn.style.display = '';
+      }
+    }
+
     updateInputLabelsDGNL();
     renderTableDGNL();
     computeDGNL();
@@ -109,6 +127,7 @@ function updateInputLabelsDGNL(){
   const unit = document.getElementById('unitLabel');
   const hint = document.getElementById('scoreHint');
   const resultLabel = document.getElementById('resultLabel');
+  const scoreInput = document.getElementById('scoreInput');
   const examName = stateDGNL.exam === 'hsa' ? 'ĐHQGHN (HSA)' : 'ĐHQG-HCM';
   const maxScore = stateDGNL.exam === 'hsa' ? 150 : 1200;
 
@@ -117,11 +136,13 @@ function updateInputLabelsDGNL(){
     unit.textContent = `/ ${maxScore}`;
     hint.textContent = `Nhập điểm thi Đánh giá năng lực ${examName} (thang điểm ${maxScore}).`;
     resultLabel.textContent = 'Điểm THPT tương đương';
+    if(scoreInput) scoreInput.placeholder = stateDGNL.exam === 'hsa' ? "VD: 100" : "VD: 850";
   } else {
     label.textContent = 'Bước 4 — Nhập điểm THPT (thang 30)';
     unit.textContent = '/ 30';
     hint.textContent = 'Nhập tổng điểm 3 môn thi tốt nghiệp THPT theo tổ hợp đã chọn (thang điểm 30).';
     resultLabel.textContent = 'Điểm ĐGNL tương đương';
+    if(scoreInput) scoreInput.placeholder = "VD: 24.5";
   }
 }
 
