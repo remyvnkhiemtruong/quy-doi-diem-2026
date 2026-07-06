@@ -23,6 +23,9 @@
     --gold:#D8A542;
     --good:#43A074;
     --good-soft:#1C3A2C;
+    --row-alt:#232B42;
+    --table-head-bg:#2E3A59;
+    --table-head-text:#F0F4FA;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -101,7 +104,7 @@
   .combo-panel.open{display:block;}
   .combo-group-label{
     font-family:'Inter', sans-serif;font-size:10.5px;text-transform:uppercase;
-    letter-spacing:0.08em;color:var(--ink-soft);padding:8px 14px 4px;background:#F7F9FC;
+    letter-spacing:0.08em;color:var(--ink-soft);padding:8px 14px 4px;background:var(--row-alt);
     position:sticky;top:0;
   }
   .combo-item{
@@ -242,6 +245,9 @@
     --gold:#B8862F;
     --good:#2F6B4F;
     --good-soft:#E4EFE8;
+    --row-alt:#F7F9FC;
+    --table-head-bg:#16233D;
+    --table-head-text:#FFFFFF;
     --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -581,8 +587,8 @@
   }
   thead th{
     position:sticky;top:0;
-    background:var(--ink);
-    color:#fff;
+    background:var(--table-head-bg);
+    color:var(--table-head-text);
     font-weight:600;
     padding:9px 10px;
     text-align:right;
@@ -597,7 +603,7 @@
     color:var(--ink);
   }
   tbody td:first-child{text-align:left;color:var(--ink-soft);}
-  tbody tr:nth-child(even){background:#F7F9FC;}
+  tbody tr:nth-child(even){background:var(--row-alt);}
   tbody tr.highlight{background:var(--seal-soft) !important;}
   tbody tr.highlight td{color:var(--seal);font-weight:600;}
 

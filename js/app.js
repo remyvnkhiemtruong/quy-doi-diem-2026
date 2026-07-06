@@ -43,12 +43,12 @@ function takeSnapshot(elementId) {
 }
 
 // --- TABS LOGIC ---
-document.querySelectorAll('.tab-btn').forEach(btn => {
+document.querySelectorAll('.tabs .tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabs .tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
   });
 });
 
