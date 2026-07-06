@@ -37,7 +37,7 @@
     -webkit-font-smoothing:antialiased;
     transition: background-color 0.3s, color 0.3s;
   }
-  .wrap{max-width:1200px;margin:0 auto;padding:0 20px 80px;}
+  .wrap{max-width:100%;margin:0 auto;padding:0 30px 80px;}
 
   header.letterhead{
     border-bottom:3px double var(--ink);
@@ -184,7 +184,7 @@
     
     .split-view-active #tab-dgnl {
       display: grid;
-      grid-template-columns: 45% 55%;
+      grid-template-columns: 35% 65%;
       gap: 30px;
       align-items: start;
     }
@@ -244,7 +244,7 @@
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:920px;margin:0 auto;padding:0 20px 80px;}
+  .wrap{max-width:100%;margin:0 auto;padding:0 30px 80px;}
 
   /* Letterhead */
   header.letterhead{

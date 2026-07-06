@@ -408,6 +408,28 @@ if (layoutToggle) {
   });
 }
 
+// Fullscreen Toggle Logic
+const fullscreenToggle = document.getElementById('fullscreenToggle');
+if (fullscreenToggle) {
+  fullscreenToggle.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      fullscreenToggle.textContent = '🗗 Thu nhỏ';
+    } else {
+      fullscreenToggle.textContent = '⛶ Toàn màn hình';
+    }
+  });
+}
+
 // ==========================================
 // --- TAB 2: KHỐI THI LOGIC ---
 // ==========================================
