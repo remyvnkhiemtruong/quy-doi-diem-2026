@@ -179,6 +179,38 @@ function interpolate(x, xHigh, xLow, yHigh, yLow){
   return yHigh - clamped * (yHigh - yLow);
 }
 
+const HSA_TOP = [
+  { hsa: 129, top: 0.03 },
+  { hsa: 117, top: 0.5 },
+  { hsa: 114, top: 1 },
+  { hsa: 111, top: 2 },
+  { hsa: 108, top: 3 },
+  { hsa: 105, top: 5 },
+  { hsa: 100, top: 10 },
+  { hsa: 93, top: 20 },
+  { hsa: 88, top: 30 },
+  { hsa: 83, top: 40 },
+  { hsa: 79, top: 50 },
+  { hsa: 75, top: 60 },
+  { hsa: 70, top: 70 },
+  { hsa: 66, top: 80 },
+  { hsa: 60, top: 90 },
+  { hsa: 19, top: 100 }
+];
+
+function getHsaTop(score) {
+  if (score >= 129) return 0.03;
+  if (score <= 19) return 100;
+  for (let i = 0; i < HSA_TOP.length - 1; i++) {
+    const p1 = HSA_TOP[i];
+    const p2 = HSA_TOP[i+1];
+    if (score <= p1.hsa && score >= p2.hsa) {
+      return p1.top + (score - p1.hsa) * (p2.top - p1.top) / (p2.hsa - p1.hsa);
+    }
+  }
+  return 100;
+}
+
 function computeDGNL(){
   const emptyState = document.getElementById('emptyState');
   const resultContent = document.getElementById('resultContent');
@@ -236,7 +268,7 @@ function computeDGNL(){
     // HSA logic
     if (!DATA_HSA || !DATA_HSA[stateDGNL.subject]) return;
     const hsaMap = DATA_HSA[stateDGNL.subject];
-    let estimated, hsaVal, thptVal;
+    let estimated, hsaVal, thptVal, activeHsa;
     
     if(stateDGNL.mode === 'gnl'){
       hsaVal = Math.round(stateDGNL.score);
@@ -256,6 +288,7 @@ function computeDGNL(){
            thptVal = 8.25; // fallback
         }
       }
+      activeHsa = hsaVal;
       unit = '/30';
       document.getElementById('resultValue').innerHTML = thptVal.toFixed(2) + '<sup>' + unit + '</sup>';
       rangeText = `Điểm HSA ${hsaVal} tương đương với ${thptVal.toFixed(2)} điểm THPT tổ hợp ${stateDGNL.subject}.`;
@@ -271,18 +304,24 @@ function computeDGNL(){
           closestHSA = Number(key);
         }
       }
+      activeHsa = closestHSA;
       thptVal = hsaMap[closestHSA];
       unit = '/150';
       document.getElementById('resultValue').innerHTML = closestHSA + '<sup>' + unit + '</sup>';
       rangeText = `Điểm THPT ${targetTHPT} gần nhất với mức quy đổi ${thptVal.toFixed(2)}, tương đương điểm ĐGNL HSA là ${closestHSA}.`;
     }
 
+    let topPercent = getHsaTop(activeHsa);
+    let percentile = 100 - topPercent;
+    let topText = topPercent < 1 ? '< 1' : topPercent.toFixed(1);
+
     document.getElementById('resultRange').textContent = rangeText;
-    document.getElementById('pvBadge').textContent = 'HSA';
-    document.getElementById('rulerMarker').style.left = '50%';
-    document.getElementById('rulerMarker').dataset.pv = 'HSA';
-    document.getElementById('rulerCaption').textContent = `Dữ liệu dựa trên bảng quy đổi ĐGNL ĐHQGHN năm 2026.`;
-    renderTableDGNL();
+    document.getElementById('pvBadge').textContent = `Tốp ${topText}%`;
+    document.getElementById('rulerMarker').style.left = percentile + '%';
+    document.getElementById('rulerMarker').dataset.pv = topText + '%';
+    document.getElementById('rulerCaption').textContent = `Vị trí ước lượng: điểm HSA này thuộc Tốp ${topText}% thí sinh có điểm cao nhất (tương đương vượt qua ${percentile.toFixed(1)}% thí sinh).`;
+    
+    renderTableDGNL(activeHsa);
   }
 }
 
@@ -326,31 +365,33 @@ function renderTableDGNL(highlightPv){
     }
   } else {
     theadRow.innerHTML = `
-      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Tốp (%)</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Tốp (%) ước lượng</th>
       <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Điểm HSA</th>
-      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'A00' ? '700' : 'normal'};">A00</th>
-      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'B00' ? '700' : 'normal'};">B00</th>
-      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'C00' ? '700' : 'normal'};">C00</th>
-      <th style="padding:10px 15px; border-bottom:1px solid var(--line); font-weight:${stateDGNL.subject === 'D01' ? '700' : 'normal'};">D01</th>
+      <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Điểm THPT (${stateDGNL.subject})</th>
     `;
-    if (!DATA_HSA_TABLE) return;
-    tbody.innerHTML = DATA_HSA_TABLE.map(r => {
-      // highlight column of active subject
-      const a00Style = stateDGNL.subject === 'A00' ? 'background:var(--seal-soft); font-weight:600;' : '';
-      const b00Style = stateDGNL.subject === 'B00' ? 'background:var(--seal-soft); font-weight:600;' : '';
-      const c00Style = stateDGNL.subject === 'C00' ? 'background:var(--seal-soft); font-weight:600;' : '';
-      const d01Style = stateDGNL.subject === 'D01' ? 'background:var(--seal-soft); font-weight:600;' : '';
-
+    if (!DATA_HSA || !DATA_HSA[stateDGNL.subject]) return;
+    const hsaMap = DATA_HSA[stateDGNL.subject];
+    const keys = Object.keys(hsaMap).map(Number).sort((a,b) => b-a);
+    
+    tbody.innerHTML = keys.map(k => {
+      let thpt = hsaMap[k];
+      let top = getHsaTop(k);
+      let topText = top < 1 ? '< 1' : top.toFixed(1);
+      let isHighlight = (k === highlightPv); // highlightPv is acting as activeHsa here
+      
       return `
-      <tr>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line); font-weight:bold;">${r.pv}</td>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.hsa}</td>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${a00Style}">${r.A00.toFixed(2)}</td>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${b00Style}">${r.B00.toFixed(2)}</td>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${c00Style}">${r.C00.toFixed(2)}</td>
-        <td style="padding:8px 15px; border-bottom:1px solid var(--line); ${d01Style}">${r.D01.toFixed(2)}</td>
+      <tr class="${isHighlight ? 'active-hl' : ''}" data-hsa="${k}" style="${isHighlight ? 'background:var(--seal-soft); font-weight:600;' : ''}">
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${topText}%</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${k}</td>
+        <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${thpt.toFixed(2)}</td>
       </tr>
-    `}).join('');
+      `;
+    }).join('');
+    
+    if(highlightPv){
+      const el = tbody.querySelector(`tr[data-hsa="${highlightPv}"]`);
+      if(el) el.scrollIntoView({block:'center'});
+    }
   }
 }
 
