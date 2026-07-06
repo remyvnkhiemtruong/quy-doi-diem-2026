@@ -1,4 +1,4 @@
-﻿
+
   :root{
     --paper:#EEF1F6;
     --card:#FFFFFF;
@@ -182,11 +182,24 @@
       display: inline-block !important;
     }
     
-    .split-view-active #tab-dgnl {
+    .split-view-active #tab-dgnl,
+    .split-view-active #tab-khoi {
       display: grid;
-      grid-template-columns: 35% 65%;
       gap: 30px;
       align-items: start;
+    }
+
+    .split-view-active #tab-dgnl {
+      grid-template-columns: 35% 65%;
+    }
+
+    .split-view-active #tab-khoi {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    .split-view-active #tab-khoi > .disclaimer {
+      grid-column: 1 / -1;
+      margin-bottom: 0;
     }
     
     .split-view-active .dgnl-table-wrapper {

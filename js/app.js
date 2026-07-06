@@ -397,7 +397,7 @@ if(document.getElementById('tableSubjectName')) {
 // Layout Toggle Logic
 const layoutToggle = document.getElementById('layoutToggle');
 if (layoutToggle) {
-  const isSplit = localStorage.getItem('splitView') === 'true';
+  const isSplit = localStorage.getItem('splitView') !== 'false';
   if (isSplit) {
     document.body.classList.add('split-view-active');
   }
