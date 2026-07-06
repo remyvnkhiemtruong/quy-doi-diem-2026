@@ -55,13 +55,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ==========================================
 // --- TAB 1: ĐGNL ↔ THPT LOGIC ---
 // ==========================================
-const SUBJECT_NAMES = {
-  A00: "Toán, Vật lí, Hóa học",
-  A01: "Toán, Vật lí, Tiếng Anh",
-  B00: "Toán, Hóa học, Sinh học",
-  C00: "Ngữ văn, Lịch sử, Địa lí",
-  D01: "Ngữ văn, Toán, Tiếng Anh"
-};
+
 
 let stateDGNL = {
   mode: "gnl",
