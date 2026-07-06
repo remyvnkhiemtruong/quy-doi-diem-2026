@@ -31,7 +31,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <!-- html2canvas for snapshot feature -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -80,7 +80,10 @@
 <div class="wrap">
 
   <header class="letterhead" style="position: relative;">
-    <button id="themeToggle" class="tab-btn" style="position: absolute; top: 0; right: 0; padding: 6px 12px; font-size: 14px;">🌓 Chế độ tối</button>
+    <div class="header-actions" style="position: absolute; top: 0; right: 0; display: flex; gap: 8px;">
+      <button id="layoutToggle" class="tab-btn desktop-only" style="padding: 6px 12px; font-size: 14px;">🗂️ Split View</button>
+      <button id="themeToggle" class="tab-btn" style="padding: 6px 12px; font-size: 14px;">🌓 Chế độ tối</button>
+    </div>
     <p class="eyebrow">Tuyển sinh 2026 · Bộ công cụ tra cứu & quy đổi</p>
     <h1>Hệ thống Quy đổi điểm 2026</h1>
     <p class="subtitle">Gộp chung các công cụ <b>Quy đổi ĐGNL ↔ THPT</b> và <b>Tra cứu phân vị khối thi</b>.</p>

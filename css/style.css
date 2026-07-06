@@ -32,12 +32,12 @@
     background-image:radial-gradient(circle at 1px 1px, rgba(128,128,128,0.1) 1px, transparent 0);
     background-size:22px 22px;
     color:var(--ink);
-    font-family:'IBM Plex Sans', sans-serif;
+    font-family:'Inter', sans-serif;
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
     transition: background-color 0.3s, color 0.3s;
   }
-  .wrap{max-width:960px;margin:0 auto;padding:0 20px 80px;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 20px 80px;}
 
   header.letterhead{
     border-bottom:3px double var(--ink);
@@ -55,7 +55,7 @@
   }
   .letterhead .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block;}
   h1{
-    font-family:'Source Serif 4', serif;
+    font-family:'Inter', sans-serif;
     font-size:clamp(26px, 4.2vw, 42px);
     font-weight:700;
     margin:0 0 10px;
@@ -169,6 +169,48 @@
   }
 
   @media (max-width:720px){
+    .search-row{flex-direction:row;}
+    .search-col-btn{margin-top:24px;}
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .desktop-only {
+      display: inline-block !important;
+    }
+    
+    .split-view-active #tab-dgnl {
+      display: grid;
+      grid-template-columns: 45% 55%;
+      gap: 30px;
+      align-items: start;
+    }
+    
+    .split-view-active .dgnl-table-wrapper {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    
+    .split-view-active .dgnl-table-wrapper::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .split-view-active .dgnl-table-wrapper::-webkit-scrollbar-thumb {
+      background: var(--ink-soft);
+      border-radius: 4px;
+    }
+    .split-view-active .dgnl-table-wrapper::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  @media (max-width:720px){
     .row{flex-direction:column;}
     .arrow-between{transform:rotate(90deg);margin:0 auto;}
   }
@@ -198,7 +240,7 @@
       radial-gradient(circle at 1px 1px, rgba(22,35,61,0.045) 1px, transparent 0);
     background-size:22px 22px;
     color:var(--ink);
-    font-family:'IBM Plex Sans', sans-serif;
+    font-family:'Inter', sans-serif;
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }

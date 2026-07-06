@@ -359,10 +359,6 @@ function renderTableDGNL(highlightPv){
         <td style="padding:8px 15px; border-bottom:1px solid var(--line);">${r.thptLow.toFixed(2)}</td>
       </tr>
     `).join('');
-    if(highlightPv){
-      const el = tbody.querySelector(`tr[data-pv="${highlightPv}"]`);
-      if(el) el.scrollIntoView({block:'center'});
-    }
   } else {
     theadRow.innerHTML = `
       <th style="padding:10px 15px; border-bottom:1px solid var(--line);">Tốp (%) ước lượng</th>
@@ -387,11 +383,6 @@ function renderTableDGNL(highlightPv){
       </tr>
       `;
     }).join('');
-    
-    if(highlightPv){
-      const el = tbody.querySelector(`tr[data-hsa="${highlightPv}"]`);
-      if(el) el.scrollIntoView({block:'center'});
-    }
   }
 }
 
@@ -401,6 +392,20 @@ if(document.getElementById('tableSubjectName')) {
   buildTicksDGNL();
   renderTableDGNL();
   computeDGNL();
+}
+
+// Layout Toggle Logic
+const layoutToggle = document.getElementById('layoutToggle');
+if (layoutToggle) {
+  const isSplit = localStorage.getItem('splitView') === 'true';
+  if (isSplit) {
+    document.body.classList.add('split-view-active');
+  }
+  layoutToggle.addEventListener('click', () => {
+    document.body.classList.toggle('split-view-active');
+    const active = document.body.classList.contains('split-view-active');
+    localStorage.setItem('splitView', active);
+  });
 }
 
 // ==========================================
