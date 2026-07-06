@@ -182,18 +182,18 @@
       display: inline-block !important;
     }
     
-    .split-view-active #tab-dgnl,
-    .split-view-active #tab-khoi {
+    .split-view-active #tab-dgnl.active,
+    .split-view-active #tab-khoi.active {
       display: grid;
       gap: 30px;
       align-items: start;
     }
 
-    .split-view-active #tab-dgnl {
+    .split-view-active #tab-dgnl.active {
       grid-template-columns: 35% 65%;
     }
 
-    .split-view-active #tab-khoi {
+    .split-view-active #tab-khoi.active {
       grid-template-columns: 1fr 1fr;
     }
     
